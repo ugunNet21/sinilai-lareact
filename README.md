@@ -46,7 +46,7 @@ Ikuti langkah-langkah berikut untuk menginstall dan menjalankan proyek. Pastikan
 
 ### **1\. Clone Repository**
 
-git clone \[https://git@github.com\](https://git@github.com):ugunNet21/sinilai-lareact.git  
+git clone [https://github.com/ugunNet21/sinilai-lareact.git](https://github.com/ugunNet21/sinilai-lareact.git)
 cd sinilai-lareact
 
 ### **2\. Setup Database (Contoh: PostgreSQL)**
