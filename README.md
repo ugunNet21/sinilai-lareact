@@ -8,6 +8,9 @@
 composer create-project laravel/laravel sinilai-lareact
 atau dengan laravel global
 laravel new sinilai-lareact
+composer require laravel/jetstream
+php artisan jetstream:install inertia --ssr
+npx laravel-jetstream-react@latest install
 
 ```
 
