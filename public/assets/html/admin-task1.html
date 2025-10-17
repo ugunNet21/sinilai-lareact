@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Sistem Nilai Siswa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-50" x-data="dashboardApp()">
+    
+    <!-- Login Page -->
+    <div x-show="!isAuthenticated" x-cloak class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 px-4">
+        <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                    <i class="fas fa-graduation-cap text-3xl text-blue-600"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800">Sistem Nilai Siswa</h2>
+                <p class="text-gray-600 mt-2">Silakan login untuk melanjutkan</p>
+            </div>
+            
+            <form @submit.prevent="login" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" x-model="loginForm.email" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" x-model="loginForm.password" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm text-blue-600 hover:text-blue-700">Lupa password?</a>
+                </div>
+                
+                <button type="submit" 
+                    class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition transform hover:scale-105">
+                    Login
+                </button>
+            </form>
+            
+            <p class="text-center text-sm text-gray-600 mt-6">
+                Belum punya akun? <a href="#" @click.prevent="showRegister = true" class="text-blue-600 hover:text-blue-700 font-semibold">Daftar</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div x-show="isAuthenticated" x-cloak class="min-h-screen">
+        
+        <!-- Sidebar -->
+        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" 
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-900 to-blue-800 text-white transform transition-transform duration-300 lg:translate-x-0">
+            
+            <div class="flex items-center justify-between p-6 border-b border-blue-700">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-graduation-cap text-2xl"></i>
+                    <span class="text-xl font-bold">SistemNilai</span>
+                </div>
+                <button @click="sidebarOpen = false" class="lg:hidden">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <nav class="p-4 space-y-2">
+                <a @click="currentPage = 'dashboard'" :class="currentPage === 'dashboard' ? 'bg-blue-700' : 'hover:bg-blue-700'" 
+                    class="flex items-center space-x-3 px-4 py-3 rounded-lg cursor-pointer transition">
+                    <i class="fas fa-chart-line w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <a @click="currentPage = 'siswa'" :class="currentPage === 'siswa' ? 'bg-blue-700' : 'hover:bg-blue-700'"
+                    class="flex items-center space-x-3 px-4 py-3 rounded-lg cursor-pointer transition">
+                    <i class="fas fa-users w-5"></i>
+                    <span>Data Siswa</span>
+                </a>
+                
+                <a @click="currentPage = 'nilai'" :class="currentPage === 'nilai' ? 'bg-blue-700' : 'hover:bg-blue-700'"
+                    class="flex items-center space-x-3 px-4 py-3 rounded-lg cursor-pointer transition">
+                    <i class="fas fa-clipboard-list w-5"></i>
+                    <span>Data Nilai</span>
+                </a>
+                
+                <a @click="currentPage = 'laporan'" :class="currentPage === 'laporan' ? 'bg-blue-700' : 'hover:bg-blue-700'"
+                    class="flex items-center space-x-3 px-4 py-3 rounded-lg cursor-pointer transition">
+                    <i class="fas fa-file-alt w-5"></i>
+                    <span>Laporan</span>
+                </a>
+                
+                <div class="pt-4 border-t border-blue-700 mt-4">
+                    <a @click="currentPage = 'settings'" :class="currentPage === 'settings' ? 'bg-blue-700' : 'hover:bg-blue-700'"
+                        class="flex items-center space-x-3 px-4 py-3 rounded-lg cursor-pointer transition">
+                        <i class="fas fa-cog w-5"></i>
+                        <span>Pengaturan</span>
+                    </a>
+                    
+                    <a @click="logout" class="flex items-center space-x-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-red-600 transition">
+                        <i class="fas fa-sign-out-alt w-5"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="lg:ml-64">
+            
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm sticky top-0 z-40">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden">
+                        <i class="fas fa-bars text-2xl text-gray-700"></i>
+                    </button>
+                    
+                    <div class="flex-1 max-w-2xl mx-4">
+                        <div class="relative">
+                            <input type="text" placeholder="Cari siswa, nilai, atau kelas..." 
+                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <button class="relative p-2 hover:bg-gray-100 rounded-full">
+                            <i class="fas fa-bell text-xl text-gray-600"></i>
+                            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
+                        
+                        <div class="flex items-center space-x-3 border-l pl-4">
+                            <img src="https://ui-avatars.com/api/?name=Admin+User&background=3B82F6&color=fff" 
+                                class="w-10 h-10 rounded-full">
+                            <div class="hidden md:block">
+                                <p class="text-sm font-semibold text-gray-800">Admin User</p>
+                                <p class="text-xs text-gray-500">Administrator</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="p-6">
+                
+                <!-- Dashboard Overview -->
+                <div x-show="currentPage === 'dashboard'">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard Overview</h1>
+                    
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm font-medium">Total Siswa</p>
+                                    <p class="text-3xl font-bold text-gray-800 mt-2">150</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-users text-blue-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <p class="text-green-600 text-sm mt-4"><i class="fas fa-arrow-up"></i> +12% dari bulan lalu</p>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm font-medium">Rata-rata Nilai</p>
+                                    <p class="text-3xl font-bold text-gray-800 mt-2">76.5</p>
+                                </div>
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-chart-line text-green-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <p class="text-green-600 text-sm mt-4"><i class="fas fa-arrow-up"></i> +3.2 poin</p>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm font-medium">Total Kelas</p>
+                                    <p class="text-3xl font-bold text-gray-800 mt-2">8</p>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-school text-purple-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <p class="text-gray-500 text-sm mt-4">7A, 7B, 8A, 8B, 9A, 9B...</p>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-orange-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm font-medium">Mata Pelajaran</p>
+                                    <p class="text-3xl font-bold text-gray-800 mt-2">12</p>
+                                </div>
+                                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-book text-orange-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <p class="text-gray-500 text-sm mt-4">Matematika, Bahasa, IPA...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Nilai Page -->
+                <div x-show="currentPage === 'nilai'">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-4 md:mb-0">Data Nilai Siswa</h1>
+                        
+                        <div class="flex flex-wrap gap-3">
+                            <button @click="showImportModal = true" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                                <i class="fas fa-file-import mr-2"></i>Import Excel
+                            </button>
+                            <button @click="exportExcel()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                <i class="fas fa-file-export mr-2"></i>Export Excel
+                            </button>
+                            <button @click="showAddModal = true" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-plus mr-2"></i>Tambah Nilai
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Filters -->
+                    <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option>Semua Kelas</option>
+                                <option>7A</option>
+                                <option>7B</option>
+                                <option>8A</option>
+                            </select>
+                            
+                            <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option>Semua Mapel</option>
+                                <option>Matematika</option>
+                                <option>Bahasa Indonesia</option>
+                                <option>IPA</option>
+                            </select>
+                            
+                            <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option>Semua Grade</option>
+                                <option>A (85-100)</option>
+                                <option>B (70-84)</option>
+                                <option>C (60-69)</option>
+                                <option>D (<60)</option>
+                            </select>
+                            
+                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                                <i class="fas fa-filter mr-2"></i>Filter
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Table -->
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">No</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Nama</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Kelas</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Mapel</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Nilai</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Grade</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <template x-for="(item, index) in nilaiData" :key="index">
+                                        <tr class="hover:bg-gray-50 transition">
+                                            <td class="px-6 py-4 text-sm text-gray-800" x-text="index + 1"></td>
+                                            <td class="px-6 py-4 text-sm font-medium text-gray-800" x-text="item.nama"></td>
+                                            <td class="px-6 py-4 text-sm text-gray-600" x-text="item.kelas"></td>
+                                            <td class="px-6 py-4 text-sm text-gray-600" x-text="item.mapel"></td>
+                                            <td class="px-6 py-4 text-sm font-semibold text-gray-800" x-text="item.nilai"></td>
+                                            <td class="px-6 py-4">
+                                                <span :class="{
+                                                    'bg-green-100 text-green-800': item.grade === 'A',
+                                                    'bg-blue-100 text-blue-800': item.grade === 'B',
+                                                    'bg-yellow-100 text-yellow-800': item.grade === 'C',
+                                                    'bg-red-100 text-red-800': item.grade === 'D'
+                                                }" class="px-3 py-1 rounded-full text-xs font-semibold" x-text="item.grade"></span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center space-x-2">
+                                                    <button @click="editNilai(item)" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button @click="deleteNilai(item)" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+                            <p class="text-sm text-gray-600">Menampilkan 1-6 dari 6 data</p>
+                            <div class="flex space-x-2">
+                                <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">Previous</button>
+                                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg">1</button>
+                                <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">2</button>
+                                <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Siswa Page -->
+                <div x-show="currentPage === 'siswa'">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-4 md:mb-0">Data Siswa</h1>
+                        <button @click="showAddSiswaModal = true" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                            <i class="fas fa-plus mr-2"></i>Tambah Siswa
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">No</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Nama</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Kelas</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Jumlah Nilai</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Rata-rata</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <template x-for="(siswa, index) in siswaData" :key="index">
+                                        <tr class="hover:bg-gray-50 transition">
+                                            <td class="px-6 py-4 text-sm text-gray-800" x-text="index + 1"></td>
+                                            <td class="px-6 py-4 text-sm font-medium text-gray-800" x-text="siswa.nama"></td>
+                                            <td class="px-6 py-4 text-sm text-gray-600" x-text="siswa.kelas"></td>
+                                            <td class="px-6 py-4 text-sm text-gray-600" x-text="siswa.jumlah_nilai"></td>
+                                            <td class="px-6 py-4">
+                                                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold" x-text="siswa.rata_rata"></span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center space-x-2">
+                                                    <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal: Add/Edit Nilai -->
+    <div x-show="showAddModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" x-transition>
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div @click="showAddModal = false" class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+            
+            <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Tambah Nilai Siswa</h3>
+                    <button @click="showAddModal = false" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form @submit.prevent="saveNilai" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Siswa</label>
+                        <select x-model="formData.siswa_id" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="">Pilih Siswa</option>
+                            <template x-for="siswa in siswaData" :key="siswa.id">
+                                <option :value="siswa.id" x-text="`${siswa.nama} (${siswa.kelas})`"></option>
+                            </template>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Mata Pelajaran</label>
+                        <select x-model="formData.mapel" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="">Pilih Mata Pelajaran</option>
+                            <option>Matematika</option>
+                            <option>Bahasa Indonesia</option>
+                            <option>Bahasa Inggris</option>
+                            <option>IPA</option>
+                            <option>IPS</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nilai (0-100)</label>
+                        <input type="number" x-model="formData.nilai" min="0" max="100" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div class="flex space-x-3 pt-4">
+                        <button type="button" @click="showAddModal = false" 
+                            class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                            Batal
+                        </button>
+                        <button type="submit" 
+                            class="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Import Excel -->
+    <div x-show="showImportModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" x-transition>
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div @click="showImportModal = false" class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+            
+            <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Import Data Excel</h3>
+                    <button @click="showImportModal = false" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition cursor-pointer">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600 mb-2">Klik atau drag & drop file Excel</p>
+                        <p class="text-sm text-gray-500">Format: .xlsx, .xls (Max 5MB)</p>
+                        <input type="file" accept=".xlsx,.xls" class="hidden">
+                    </div>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p class="text-sm text-blue-800 font-medium mb-2">Format Excel:</p>
+                        <p class="text-xs text-blue-600">Kolom: No | Nama | Kelas | Mapel | Nilai</p>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button @click="showImportModal = false" 
+                            class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                            Batal
+                        </button>
+                        <button class="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                            Import
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function dashboardApp() {
+            return {
+                isAuthenticated: false,
+                sidebarOpen: false,
+                currentPage: 'dashboard',
+                showAddModal: false,
+                showImportModal: false,
+                showAddSiswaModal: false,
+                
+                loginForm: {
+                    email: 'admin@example.com',
+                    password: 'password'
+                },
+                
+                formData: {
+                    siswa_id: '',
+                    mapel: '',
+                    nilai: ''
+                },
+                
+                nilaiData: [
+                    { id: 1, nama: 'Andi', kelas: '7A', mapel: 'Matematika', nilai: 80, grade: 'B' },
+                    { id: 2, nama: 'Andi', kelas: '7A', mapel: 'Bahasa', nilai: 70, grade: 'B' },
+                    { id: 3, nama: 'Budi', kelas: '7A', mapel: 'Matematika', nilai: 60, grade: 'C' },
+                    { id: 4, nama: 'Budi', kelas: '7A', mapel: 'Bahasa', nilai: 75, grade: 'B' },
+                    { id: 5, nama: 'Citra', kelas: '7B', mapel: 'Matematika', nilai: 90, grade: 'A' },
+                    { id: 6, nama: 'Citra', kelas: '7B', mapel: 'Bahasa', nilai: 85, grade: 'A' }
+                ],
+                
+                siswaData: [
+                    { id: 1, nama: 'Andi', kelas: '7A', jumlah_nilai: 2, rata_rata: 75 },
+                    { id: 2, nama: 'Budi', kelas: '7A', jumlah_nilai: 2, rata_rata: 67.5 },
+                    { id: 3, nama: 'Citra', kelas: '7B', jumlah_nilai: 2, rata_rata: 87.5 }
+                ],
+                
+                login() {
+                    // Simulate login - in real app, send to backend
+                    if (this.loginForm.email && this.loginForm.password) {
+                        this.isAuthenticated = true;
+                        this.currentPage = 'dashboard';
+                    }
+                },
+                
+                logout() {
+                    this.isAuthenticated = false;
+                    this.loginForm = { email: '', password: '' };
+                },
+                
+                saveNilai() {
+                    // Get selected siswa data
+                    const siswa = this.siswaData.find(s => s.id == this.formData.siswa_id);
+                    
+                    // Calculate grade
+                    let grade = 'D';
+                    if (this.formData.nilai >= 85) grade = 'A';
+                    else if (this.formData.nilai >= 70) grade = 'B';
+                    else if (this.formData.nilai >= 60) grade = 'C';
+                    
+                    // Add to nilaiData
+                    this.nilaiData.push({
+                        id: this.nilaiData.length + 1,
+                        nama: siswa.nama,
+                        kelas: siswa.kelas,
+                        mapel: this.formData.mapel,
+                        nilai: parseInt(this.formData.nilai),
+                        grade: grade
+                    });
+                    
+                    // Reset form and close modal
+                    this.formData = { siswa_id: '', mapel: '', nilai: '' };
+                    this.showAddModal = false;
+                    
+                    alert('Data nilai berhasil ditambahkan!');
+                },
+                
+                editNilai(item) {
+                    this.formData = { ...item };
+                    this.showAddModal = true;
+                },
+                
+                deleteNilai(item) {
+                    if (confirm(`Hapus nilai ${item.mapel} untuk ${item.nama}?`)) {
+                        const index = this.nilaiData.findIndex(n => n.id === item.id);
+                        if (index > -1) {
+                            this.nilaiData.splice(index, 1);
+                            alert('Data berhasil dihapus!');
+                        }
+                    }
+                },
+                
+                exportExcel() {
+                    alert('Export Excel akan diproses...\nFormat: No | Nama | Kelas | Mapel | Nilai');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
