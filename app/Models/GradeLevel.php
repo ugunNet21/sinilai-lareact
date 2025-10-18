@@ -28,7 +28,7 @@ class GradeLevel extends Model
         return $this->belongsTo(School::class);
     }
 
-    public function classes()
+    public function classRoom()
     {
         return $this->hasMany(ClassRoom::class);
     }

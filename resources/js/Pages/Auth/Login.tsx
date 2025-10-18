@@ -137,7 +137,7 @@ export default function Login({ canResetPassword, status }: Props) {
         <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
           <p className="text-sm text-blue-700 text-center">
             <i className="fas fa-info-circle mr-1"></i>
-            Demo: admin@example.com / password
+            Demo: admin@sekolah.test / password123
           </p>
         </div>
       </AuthenticationCard>

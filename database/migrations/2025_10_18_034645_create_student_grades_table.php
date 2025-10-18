@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('student_id')->constrained('students')->onDelete('cascade');
             $table->foreignUuid('subject_id')->constrained('subjects')->onDelete('cascade');
-            $table->foreignUuid('class_id')->constrained('classes')->onDelete('cascade');
+            $table->foreignUuid('class_id')->constrained('class_rooms')->onDelete('cascade');
             $table->foreignUuid('assessment_type_id')->constrained('assessment_types')->onDelete('cascade');
             $table->foreignUuid('grade_component_id')->constrained('grade_components')->onDelete('cascade');
             $table->foreignUuid('academic_year_id')->constrained('academic_years')->onDelete('cascade');

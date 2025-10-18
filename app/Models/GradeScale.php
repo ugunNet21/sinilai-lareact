@@ -41,4 +41,23 @@ class GradeScale extends Model
     {
         return $this->hasMany(StudentGrade::class);
     }
+    /**
+     * Get matching grade scale for a given score
+     */
+    public static function getMatchingScale(string $schoolId, float $score): ?self
+    {
+        return static::where('school_id', $schoolId)
+            ->where('min_score', '<=', $score)
+            ->where('max_score', '>=', $score)
+            ->first();
+    }
+
+    /**
+     * Scope untuk mencari skala berdasarkan score
+     */
+    public function scopeForScore($query, float $score)
+    {
+        return $query->where('min_score', '<=', $score)
+            ->where('max_score', '>=', $score);
+    }
 }

@@ -36,7 +36,7 @@ class Teacher extends Model
         return $this->belongsTo(School::class);
     }
 
-    public function homeroomClasses()
+    public function homeroomClassRoom()
     {
         return $this->hasMany(ClassRoom::class, 'homeroom_teacher_id');
     }

@@ -35,7 +35,7 @@ class AcademicYear extends Model
         return $this->hasMany(Semester::class);
     }
 
-    public function classes()
+    public function classRoom()
     {
         return $this->hasMany(ClassRoom::class);
     }
