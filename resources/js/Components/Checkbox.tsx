@@ -1,20 +1,23 @@
+// js/Components/Checkbox.tsx
 import classNames from 'classnames';
-import React from 'react';
+import React, { forwardRef } from 'react';
 
-export default function Checkbox(
-  props: React.DetailedHTMLProps<
+const Checkbox = forwardRef<
+  HTMLInputElement,
+  React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
-  >,
-) {
-  return (
-    <input
-      type="checkbox"
-      {...props}
-      className={classNames(
-        'rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500',
-        props.className,
-      )}
-    />
-  );
-}
+  >
+>((props, ref) => (
+  <input
+    {...props}
+    type="checkbox"
+    ref={ref}
+    className={classNames(
+      'rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition',
+      props.className,
+    )}
+  />
+));
+
+export default Checkbox;

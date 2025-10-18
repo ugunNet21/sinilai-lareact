@@ -1,3 +1,4 @@
+// js/components/AuthenticationCard.tsx
 import React, { PropsWithChildren } from 'react';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo';
 

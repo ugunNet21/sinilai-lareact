@@ -1,21 +1,31 @@
-import React, { PropsWithChildren } from 'react';
+// js/Components/InputLabel.tsx
+import classNames from 'classnames';
+import React from 'react';
 
-interface Props {
-  value?: string;
+interface InputLabelProps {
   htmlFor?: string;
+  children: React.ReactNode;
+  className?: string;
+  value?: string;
 }
 
-export default function InputLabel({
+export default function InputLabel({ 
+  htmlFor, 
+  children, 
+  className = '',
   value,
-  htmlFor,
-  children,
-}: PropsWithChildren<Props>) {
+  ...props 
+}: InputLabelProps) {
   return (
     <label
-      className="block font-medium text-sm text-gray-700"
       htmlFor={htmlFor}
+      className={classNames(
+        'block text-sm font-medium text-gray-700',
+        className
+      )}
+      {...props}
     >
-      {value || children}
+      {value ? value : children}
     </label>
   );
 }
