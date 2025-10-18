@@ -1,3 +1,4 @@
+// js/Pages/Auth/Login.tsx
 import { Link, useForm, Head } from '@inertiajs/react';
 import classNames from 'classnames';
 import React from 'react';
@@ -30,88 +31,116 @@ export default function Login({ canResetPassword, status }: Props) {
   }
 
   return (
-    <AuthenticationCard>
-      <Head title="Login" />
+    <>
+      <Head title="Login - SistemNilai" />
+      
+      <AuthenticationCard
+        title="Masuk ke Akun Anda"
+        subtitle="Selamat datang kembali! Silakan masuk untuk mengelola sistem nilai."
+      >
+        {status && (
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-600 text-sm">
+            {status}
+          </div>
+        )}
 
-      {status && (
-        <div className="mb-4 font-medium text-sm text-green-600">
-          {status}
-        </div>
-      )}
-
-      <form onSubmit={onSubmit}>
-        <div>
-          <InputLabel htmlFor="email">Email</InputLabel>
-          <TextInput
-            id="email"
-            type="email"
-            className="mt-1 block w-full"
-            value={form.data.email}
-            onChange={e => form.setData('email', e.currentTarget.value)}
-            required
-            autoFocus
-          />
-          <InputError className="mt-2" message={form.errors.email} />
-        </div>
-
-        <div className="mt-4">
-          <InputLabel htmlFor="password">Password</InputLabel>
-          <TextInput
-            id="password"
-            type="password"
-            className="mt-1 block w-full"
-            value={form.data.password}
-            onChange={e => form.setData('password', e.currentTarget.value)}
-            required
-            autoComplete="current-password"
-          />
-          <InputError className="mt-2" message={form.errors.password} />
-        </div>
-
-        <div className="mt-4">
-          <label className="flex items-center">
-            <Checkbox
-              name="remember"
-              checked={form.data.remember === 'on'}
-              onChange={e =>
-                form.setData('remember', e.currentTarget.checked ? 'on' : '')
-              }
+        <form onSubmit={onSubmit} className="space-y-6">
+          <div>
+            <InputLabel htmlFor="email" className="text-gray-700 font-medium">
+              Email
+            </InputLabel>
+            <TextInput
+              id="email"
+              type="email"
+              className="mt-1 block w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+              value={form.data.email}
+              onChange={e => form.setData('email', e.currentTarget.value)}
+              required
+              autoFocus
+              placeholder="masukkan email anda"
             />
-            <span className="ml-2 text-sm text-gray-600">
-              Remember me
-            </span>
-          </label>
-        </div>
+            <InputError className="mt-2" message={form.errors.email} />
+          </div>
 
-        <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0 mt-4">
-          {canResetPassword && (
-            <div>
+          <div>
+            <InputLabel htmlFor="password" className="text-gray-700 font-medium">
+              Password
+            </InputLabel>
+            <TextInput
+              id="password"
+              type="password"
+              className="mt-1 block w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+              value={form.data.password}
+              onChange={e => form.setData('password', e.currentTarget.value)}
+              required
+              autoComplete="current-password"
+              placeholder="masukkan password anda"
+            />
+            <InputError className="mt-2" message={form.errors.password} />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <label className="flex items-center">
+              <Checkbox
+                name="remember"
+                checked={form.data.remember === 'on'}
+                onChange={e =>
+                  form.setData('remember', e.currentTarget.checked ? 'on' : '')
+                }
+              />
+              <span className="ml-2 text-sm text-gray-600">
+                Ingat saya
+              </span>
+            </label>
+
+            {canResetPassword && (
               <Link
                 href={route('password.request')}
-                className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="text-sm text-blue-600 hover:text-blue-500 font-medium transition"
               >
-                Forgot your password?
+                Lupa password?
               </Link>
-            </div>
-          )}
-
-          <div className="flex items-center justify-end">
-            <Link
-              href={route('register')}
-              className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Need an account?
-            </Link>
-
-            <PrimaryButton
-              className={classNames('ml-4', { 'opacity-25': form.processing })}
-              disabled={form.processing}
-            >
-              Log in
-            </PrimaryButton>
+            )}
           </div>
+
+          <PrimaryButton
+            className={classNames(
+              'w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition',
+              { 'opacity-50 cursor-not-allowed': form.processing }
+            )}
+            disabled={form.processing}
+          >
+            {form.processing ? (
+              <span className="flex items-center">
+                <i className="fas fa-spinner fa-spin mr-2"></i>
+                Memproses...
+              </span>
+            ) : (
+              'Masuk'
+            )}
+          </PrimaryButton>
+
+          <div className="text-center">
+            <span className="text-sm text-gray-600">
+              Belum punya akun?{' '}
+              <Link
+                href={route('register')}
+                className="font-medium text-blue-600 hover:text-blue-500 transition"
+              >
+                Daftar di sini
+              </Link>
+            </span>
+          </div>
+        </form>
+
+        {/* Demo Info (optional) */}
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <p className="text-sm text-blue-700 text-center">
+            <i className="fas fa-info-circle mr-1"></i>
+            Demo: admin@example.com / password
+          </p>
         </div>
-      </form>
-    </AuthenticationCard>
+      </AuthenticationCard>
+    </>
   );
 }

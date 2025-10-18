@@ -1,3 +1,4 @@
+// js/Pages/Auth/Registes.tsx
 import { Link, useForm, Head } from '@inertiajs/react';
 import classNames from 'classnames';
 import React from 'react';
@@ -29,77 +30,90 @@ export default function Register() {
   }
 
   return (
-    <AuthenticationCard>
-      <Head title="Register" />
+    <>
+      <Head title="Daftar - SistemNilai" />
+      
+      <AuthenticationCard
+        title="Buat Akun Baru"
+        subtitle="Bergabung dengan SistemNilai untuk mulai mengelola nilai siswa dengan mudah."
+      >
+        <form onSubmit={onSubmit} className="space-y-6">
+          <div>
+            <InputLabel htmlFor="name" className="text-gray-700 font-medium">
+              Nama Lengkap
+            </InputLabel>
+            <TextInput
+              id="name"
+              type="text"
+              className="mt-1 block w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+              value={form.data.name}
+              onChange={e => form.setData('name', e.currentTarget.value)}
+              required
+              autoFocus
+              autoComplete="name"
+              placeholder="masukkan nama lengkap"
+            />
+            <InputError className="mt-2" message={form.errors.name} />
+          </div>
 
-      <form onSubmit={onSubmit}>
-        <div>
-          <InputLabel htmlFor="name">Name</InputLabel>
-          <TextInput
-            id="name"
-            type="text"
-            className="mt-1 block w-full"
-            value={form.data.name}
-            onChange={e => form.setData('name', e.currentTarget.value)}
-            required
-            autoFocus
-            autoComplete="name"
-          />
-          <InputError className="mt-2" message={form.errors.name} />
-        </div>
+          <div>
+            <InputLabel htmlFor="email" className="text-gray-700 font-medium">
+              Email
+            </InputLabel>
+            <TextInput
+              id="email"
+              type="email"
+              className="mt-1 block w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+              value={form.data.email}
+              onChange={e => form.setData('email', e.currentTarget.value)}
+              required
+              placeholder="contoh@email.com"
+            />
+            <InputError className="mt-2" message={form.errors.email} />
+          </div>
 
-        <div className="mt-4">
-          <InputLabel htmlFor="email">Email</InputLabel>
-          <TextInput
-            id="email"
-            type="email"
-            className="mt-1 block w-full"
-            value={form.data.email}
-            onChange={e => form.setData('email', e.currentTarget.value)}
-            required
-          />
-          <InputError className="mt-2" message={form.errors.email} />
-        </div>
+          <div>
+            <InputLabel htmlFor="password" className="text-gray-700 font-medium">
+              Password
+            </InputLabel>
+            <TextInput
+              id="password"
+              type="password"
+              className="mt-1 block w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+              value={form.data.password}
+              onChange={e => form.setData('password', e.currentTarget.value)}
+              required
+              autoComplete="new-password"
+              placeholder="buat password yang kuat"
+            />
+            <InputError className="mt-2" message={form.errors.password} />
+          </div>
 
-        <div className="mt-4">
-          <InputLabel htmlFor="password">Password</InputLabel>
-          <TextInput
-            id="password"
-            type="password"
-            className="mt-1 block w-full"
-            value={form.data.password}
-            onChange={e => form.setData('password', e.currentTarget.value)}
-            required
-            autoComplete="new-password"
-          />
-          <InputError className="mt-2" message={form.errors.password} />
-        </div>
+          <div>
+            <InputLabel htmlFor="password_confirmation" className="text-gray-700 font-medium">
+              Konfirmasi Password
+            </InputLabel>
+            <TextInput
+              id="password_confirmation"
+              type="password"
+              className="mt-1 block w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+              value={form.data.password_confirmation}
+              onChange={e =>
+                form.setData('password_confirmation', e.currentTarget.value)
+              }
+              required
+              autoComplete="new-password"
+              placeholder="ulangi password anda"
+            />
+            <InputError
+              className="mt-2"
+              message={form.errors.password_confirmation}
+            />
+          </div>
 
-        <div className="mt-4">
-          <InputLabel htmlFor="password_confirmation">
-            Confirm Password
-          </InputLabel>
-          <TextInput
-            id="password_confirmation"
-            type="password"
-            className="mt-1 block w-full"
-            value={form.data.password_confirmation}
-            onChange={e =>
-              form.setData('password_confirmation', e.currentTarget.value)
-            }
-            required
-            autoComplete="new-password"
-          />
-          <InputError
-            className="mt-2"
-            message={form.errors.password_confirmation}
-          />
-        </div>
-
-        {page.props.jetstream.hasTermsAndPrivacyPolicyFeature && (
-          <div className="mt-4">
-            <InputLabel htmlFor="terms">
-              <div className="flex items-center">
+          {page.props.jetstream.hasTermsAndPrivacyPolicyFeature && (
+            <div className="mt-4">
+              <label className="flex items-start">
                 <Checkbox
                   name="terms"
                   id="terms"
@@ -107,47 +121,59 @@ export default function Register() {
                   onChange={e => form.setData('terms', e.currentTarget.checked)}
                   required
                 />
-
-                <div className="ml-2">
-                  I agree to the
+                <span className="ml-2 text-sm text-gray-600">
+                  Saya setuju dengan{' '}
                   <a
                     target="_blank"
                     href={route('terms.show')}
-                    className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="text-blue-600 hover:text-blue-500 font-medium transition"
                   >
-                    Terms of Service
-                  </a>
-                  and
+                    Syarat Layanan
+                  </a>{' '}
+                  dan{' '}
                   <a
                     target="_blank"
                     href={route('policy.show')}
-                    className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="text-blue-600 hover:text-blue-500 font-medium transition"
                   >
-                    Privacy Policy
+                    Kebijakan Privasi
                   </a>
-                </div>
-              </div>
+                </span>
+              </label>
               <InputError className="mt-2" message={form.errors.terms} />
-            </InputLabel>
-          </div>
-        )}
-
-        <div className="flex items-center justify-end mt-4">
-          <Link
-            href={route('login')}
-            className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Already registered?
-          </Link>
+            </div>
+          )}
 
           <PrimaryButton
-            className={classNames('ml-4', { 'opacity-25': form.processing })}
+            className={classNames(
+              'w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition',
+              { 'opacity-50 cursor-not-allowed': form.processing }
+            )}
             disabled={form.processing}
           >
-            Register
+            {form.processing ? (
+              <span className="flex items-center">
+                <i className="fas fa-spinner fa-spin mr-2"></i>
+                Membuat Akun...
+              </span>
+            ) : (
+              'Daftar Sekarang'
+            )}
           </PrimaryButton>
-        </div>
-      </form>
-    </AuthenticationCard>
+
+          <div className="text-center">
+            <span className="text-sm text-gray-600">
+              Sudah punya akun?{' '}
+              <Link
+                href={route('login')}
+                className="font-medium text-blue-600 hover:text-blue-500 transition"
+              >
+                Masuk di sini
+              </Link>
+            </span>
+          </div>
+        </form>
+      </AuthenticationCard>
+    </>
   );
 }

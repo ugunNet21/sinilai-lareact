@@ -7,12 +7,16 @@ use Inertia\Inertia;
 // Frontend
 Route::get('/', [App\Http\Controllers\Frontend\HomeController::class, 'index']);
 
+// Admin
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('students', App\Http\Controllers\Admin\StudentController::class);
+    Route::resource('grades', App\Http\Controllers\Admin\GradeController::class);
+    Route::resource('reports', App\Http\Controllers\Admin\ReportController::class);
+    Route::resource('settings', App\Http\Controllers\Admin\SettingController::class);
 });
