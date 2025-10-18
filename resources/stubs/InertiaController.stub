@@ -1,0 +1,74 @@
+<?php
+
+namespace {{namespace}};
+
+use App\Http\Controllers\Controller;
+use {{serviceNamespace}}\{{model}}Service;
+use {{requestNamespace}}\{{model}}Request;
+use Inertia\Inertia;
+
+class {{model}}Controller extends Controller
+{
+    protected $service;
+
+    public function __construct({{model}}Service $service)
+    {
+        $this->service = $service;
+    }
+
+    public function index()
+    {
+        ${{modelPlural}} = $this->service->all();
+        
+        return Inertia::render('{{model}}/Index', [
+            '{{modelPlural}}' => ${{modelPlural}}
+        ]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('{{model}}/Create');
+    }
+
+    public function store({{model}}Request $request)
+    {
+        $this->service->create($request->validated());
+        
+        return redirect()->route('{{modelKebab}}.index')
+            ->with('success', '{{model}} created successfully.');
+    }
+
+    public function show(string $id)
+    {
+        ${{modelKebab}} = $this->service->find($id);
+        
+        return Inertia::render('{{model}}/Show', [
+            '{{modelKebab}}' => ${{modelKebab}}
+        ]);
+    }
+
+    public function edit(string $id)
+    {
+        ${{modelKebab}} = $this->service->find($id);
+        
+        return Inertia::render('{{model}}/Edit', [
+            '{{modelKebab}}' => ${{modelKebab}}
+        ]);
+    }
+
+    public function update({{model}}Request $request, string $id)
+    {
+        $this->service->update($id, $request->validated());
+        
+        return redirect()->route('{{modelKebab}}.index')
+            ->with('success', '{{model}} updated successfully.');
+    }
+
+    public function destroy(string $id)
+    {
+        $this->service->delete($id);
+        
+        return redirect()->route('{{modelKebab}}.index')
+            ->with('success', '{{model}} deleted successfully.');
+    }
+}
