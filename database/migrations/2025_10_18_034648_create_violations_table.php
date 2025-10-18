@@ -12,8 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('violations', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('school_id')->constrained('schools')->onDelete('cascade');
+            $table->string('name', 255);
+            $table->string('code', 50);
+            $table->enum('category', ['RINGAN', 'SEDANG', 'BERAT'])->nullable();
+            $table->integer('point')->default(0);
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
+
+            $table->unique(['school_id', 'code']);
         });
     }
 

@@ -12,8 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('semesters', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('academic_year_id')->constrained('academic_years')->onDelete('cascade');
+            $table->string('name', 50);
+            $table->string('code', 10);
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->boolean('is_current')->default(false);
             $table->timestamps();
+            
+            $table->unique(['academic_year_id', 'code']);
         });
     }
 
