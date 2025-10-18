@@ -88,6 +88,15 @@ cd sinilai-lareact
 4. Install dependensi Node.js:  
    npm install
 
+5. Install Spatie Permission
+   composer require spatie/laravel-permission
+   php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+
+6. Instal Spatie Backup
+   composer require spatie/laravel-backup
+   php artisan vendor:publish --provider="Spatie\Backup\BackupServiceProvider" --tag=backup-config
+   php artisan vendor:publish --provider="Spatie\Backup\BackupServiceProvider" --tag=backup-translations
+
 ### **5\. Jalankan Migration dan Seeder**
 
 1. Jalankan migrasi untuk membuat tabel-tabel di database:  
