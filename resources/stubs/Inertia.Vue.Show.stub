@@ -1,0 +1,65 @@
+<template>
+    <Head title="{{model}} Details" />
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold">{{model}} Details</h2>
+                        <div class="space-x-2">
+                            <Link
+                                :href="route('{{modelKebab}}.edit', {{modelKebab}}.id)"
+                                class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                                Edit
+                            </Link>
+                            <Link
+                                :href="route('{{modelKebab}}.index')"
+                                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                                Back to List
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="border-b pb-4">
+                            <h3 class="text-sm font-medium text-gray-500">ID</h3>
+                            <p class="mt-1 text-lg text-gray-900">{{ {{modelKebab}}.id }}</p>
+                        </div>
+
+                        <div class="border-b pb-4">
+                            <h3 class="text-sm font-medium text-gray-500">Name</h3>
+                            <p class="mt-1 text-lg text-gray-900">{{ {{modelKebab}}.name }}</p>
+                        </div>
+
+                        <!-- Add more fields here -->
+
+                        <div class="border-b pb-4">
+                            <h3 class="text-sm font-medium text-gray-500">Created At</h3>
+                            <p class="mt-1 text-lg text-gray-900">
+                                {{ new Date({{modelKebab}}.created_at).toLocaleString() }}
+                            </p>
+                        </div>
+
+                        <div class="border-b pb-4">
+                            <h3 class="text-sm font-medium text-gray-500">Updated At</h3>
+                            <p class="mt-1 text-lg text-gray-900">
+                                {{ new Date({{modelKebab}}.updated_at).toLocaleString() }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import { Head, Link } from '@inertiajs/vue3';
+
+defineProps({
+    {{modelKebab}}: Object
+});
+</script>

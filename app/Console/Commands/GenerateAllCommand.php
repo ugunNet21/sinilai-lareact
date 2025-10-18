@@ -17,9 +17,11 @@ class GenerateAllCommand extends Command
                             {--livewire} 
                             {--request} 
                             {--seed} 
-                            {--factory}';
+                            {--factory}
+                            {--inertia-react}
+                            {--inertia-vue}';
 
-    protected $description = 'Generate multiple Laravel components at once with optional subfolder';
+    protected $description = 'Generate multiple Laravel components at once with optional subfolder and Inertia support';
 
     public function handle()
     {
@@ -42,11 +44,19 @@ class GenerateAllCommand extends Command
         // Generate Controller
         if ($this->option('controller')) {
             $controllerPath = $subFolder ? "{$subFolder}/{$modelName}Controller" : "{$modelName}Controller";
-            $this->call('make:controller', [
-                'name' => $controllerPath,
-                '--model' => $fullPath,
-                '--api' => false,
-            ]);
+            
+            // Check if Inertia is requested
+            $isInertia = $this->option('inertia-react') || $this->option('inertia-vue');
+            
+            if ($isInertia) {
+                $this->createInertiaController($modelName, $subFolder);
+            } else {
+                $this->call('make:controller', [
+                    'name' => $controllerPath,
+                    '--model' => $fullPath,
+                    '--api' => false,
+                ]);
+            }
         }
 
         // Generate Repository
@@ -75,6 +85,16 @@ class GenerateAllCommand extends Command
             ]);
         }
 
+        // Generate Inertia React Components
+        if ($this->option('inertia-react')) {
+            $this->createInertiaReactComponents($modelName, $subFolder);
+        }
+
+        // Generate Inertia Vue Components
+        if ($this->option('inertia-vue')) {
+            $this->createInertiaVueComponents($modelName, $subFolder);
+        }
+
         $this->info("All components for {$modelName} generated successfully in {$subFolder}!");
     }
 
@@ -97,7 +117,6 @@ class GenerateAllCommand extends Command
         $repoNamespace = $subFolder ? "App\\Repositories\\{$subFolder}" : "App\\Repositories";
         $interfaceNamespace = $subFolder ? "App\\Repositories\\Contracts\\{$subFolder}" : "App\\Repositories\\Contracts";
         
-        // Create directories if they don't exist
         $repoDirectory = $subFolder ? app_path("Repositories/{$subFolder}") : app_path('Repositories');
         $interfaceDirectory = $subFolder ? app_path("Repositories/Contracts/{$subFolder}") : app_path('Repositories/Contracts');
 
@@ -112,7 +131,6 @@ class GenerateAllCommand extends Command
         $repoPath = "{$repoDirectory}/{$modelName}Repository.php";
         $repoInterfacePath = "{$interfaceDirectory}/{$modelName}RepositoryInterface.php";
 
-        // Create Interface
         $interfaceStub = $this->getStub('RepositoryInterface');
         $interfaceContent = str_replace(
             ['{{model}}', '{{namespace}}'],
@@ -121,7 +139,6 @@ class GenerateAllCommand extends Command
         );
         file_put_contents($repoInterfacePath, $interfaceContent);
 
-        // Create Repository
         $repoStub = $this->getStub('Repository');
         $repoContent = str_replace(
             ['{{model}}', '{{namespace}}', '{{interfaceNamespace}}'],
@@ -130,7 +147,7 @@ class GenerateAllCommand extends Command
         );
         file_put_contents($repoPath, $repoContent);
 
-        $this->info("Repository and Interface for {$modelName} created successfully in {$subFolder}.");
+        $this->info("Repository and Interface for {$modelName} created successfully.");
     }
 
     protected function createService($modelName, $subFolder = null)
@@ -154,7 +171,102 @@ class GenerateAllCommand extends Command
         );
         file_put_contents($servicePath, $serviceContent);
     
-        $this->info("Service for {$modelName} created successfully in {$subFolder}.");
+        $this->info("Service for {$modelName} created successfully.");
+    }
+
+    protected function createInertiaController($modelName, $subFolder = null)
+    {
+        $namespace = $subFolder ? "App\\Http\\Controllers\\{$subFolder}" : "App\\Http\\Controllers";
+        $serviceNamespace = $subFolder ? "App\\Services\\{$subFolder}" : "App\\Services";
+        $requestNamespace = $subFolder ? "App\\Http\\Requests\\{$subFolder}" : "App\\Http\\Requests";
+        
+        $controllerDirectory = $subFolder ? app_path("Http/Controllers/{$subFolder}") : app_path('Http/Controllers');
+    
+        if (!file_exists($controllerDirectory)) {
+            mkdir($controllerDirectory, 0755, true);
+        }
+    
+        $controllerPath = "{$controllerDirectory}/{$modelName}Controller.php";
+    
+        $controllerStub = $this->getStub('InertiaController');
+        $controllerContent = str_replace(
+            [
+                '{{namespace}}', 
+                '{{model}}', 
+                '{{serviceNamespace}}',
+                '{{requestNamespace}}',
+                '{{modelPlural}}',
+                '{{modelKebab}}'
+            ],
+            [
+                $namespace, 
+                $modelName, 
+                $serviceNamespace,
+                $requestNamespace,
+                Str::plural($modelName),
+                Str::kebab($modelName)
+            ],
+            $controllerStub
+        );
+        file_put_contents($controllerPath, $controllerContent);
+    
+        $this->info("Inertia Controller for {$modelName} created successfully.");
+    }
+
+    protected function createInertiaReactComponents($modelName, $subFolder = null)
+    {
+        $componentPath = $subFolder ? "{$subFolder}/{$modelName}" : $modelName;
+        $baseDirectory = resource_path("js/Pages/{$componentPath}");
+
+        if (!file_exists($baseDirectory)) {
+            mkdir($baseDirectory, 0755, true);
+        }
+
+        $components = ['Index', 'Create', 'Edit', 'Show', '_Form'];
+        
+        foreach ($components as $component) {
+            $stubName = "Inertia.React.{$component}";
+            $fileName = "{$component}.tsx";
+            $filePath = "{$baseDirectory}/{$fileName}";
+
+            $stub = $this->getStub($stubName);
+            $content = str_replace(
+                ['{{model}}', '{{modelPlural}}', '{{modelKebab}}'],
+                [$modelName, Str::plural($modelName), Str::kebab($modelName)],
+                $stub
+            );
+            file_put_contents($filePath, $content);
+        }
+
+        $this->info("Inertia React components for {$modelName} created successfully.");
+    }
+
+    protected function createInertiaVueComponents($modelName, $subFolder = null)
+    {
+        $componentPath = $subFolder ? "{$subFolder}/{$modelName}" : $modelName;
+        $baseDirectory = resource_path("js/Pages/{$componentPath}");
+
+        if (!file_exists($baseDirectory)) {
+            mkdir($baseDirectory, 0755, true);
+        }
+
+        $components = ['Index', 'Create', 'Edit', 'Show', '_Form'];
+        
+        foreach ($components as $component) {
+            $stubName = "Inertia.Vue.{$component}";
+            $fileName = "{$component}.vue";
+            $filePath = "{$baseDirectory}/{$fileName}";
+
+            $stub = $this->getStub($stubName);
+            $content = str_replace(
+                ['{{model}}', '{{modelPlural}}', '{{modelKebab}}'],
+                [$modelName, Str::plural($modelName), Str::kebab($modelName)],
+                $stub
+            );
+            file_put_contents($filePath, $content);
+        }
+
+        $this->info("Inertia Vue components for {$modelName} created successfully.");
     }
 
     protected function getStub($type)

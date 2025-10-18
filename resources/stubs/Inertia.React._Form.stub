@@ -1,0 +1,46 @@
+import React from 'react';
+import { useForm } from '@inertiajs/react';
+
+export default function Form({ {{modelKebab}} = null, onSubmit }) {
+    const { data, setData, errors, processing } = useForm({
+        name: {{modelKebab}}?.name || '',
+        // Add more fields here
+    });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(data);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                    Name
+                </label>
+                <input
+                    type="text"
+                    id="name"
+                    value={data.name}
+                    onChange={(e) => setData('name', e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                />
+                {errors.name && (
+                    <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                )}
+            </div>
+
+            {/* Add more form fields here */}
+
+            <div className="flex items-center justify-end space-x-3">
+                <button
+                    type="submit"
+                    disabled={processing}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+                >
+                    {processing ? 'Saving...' : 'Save'}
+                </button>
+            </div>
+        </form>
+    );
+}
