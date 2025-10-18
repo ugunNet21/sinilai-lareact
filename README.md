@@ -92,6 +92,10 @@ cd sinilai-lareact
    composer require spatie/laravel-permission
    php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
 
+6. Instal Spatie Backup
+   composer require spatie/laravel-backup
+   php artisan vendor:publish --provider="Spatie\Backup\BackupServiceProvider" --tag=backup-config
+   php artisan vendor:publish --provider="Spatie\Backup\BackupServiceProvider" --tag=backup-translations
 
 ### **5\. Jalankan Migration dan Seeder**
 
