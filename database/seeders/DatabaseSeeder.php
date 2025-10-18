@@ -18,6 +18,24 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolesSeeder::class,
             UserSeeder::class,
+            SchoolSeeder::class,
+            AcademicYearSeeder::class,
+            SemesterSeeder::class,
+            GradeLevelSeeder::class,
+            SubjectSeeder::class,
+            CurriculumSeeder::class,
+            TeacherSeeder::class,
+            ClassRoomSeeder::class,
+            CurriculumSubjectSeeder::class,
+            StudentSeeder::class,
+            StudentClassHistorySeeder::class,
+            TeachingAssignmentSeeder::class,
+            AssessmentTypeSeeder::class,
+            GradeComponentSeeder::class,
+            GradeScaleSeeder::class,
+            StudentGradeSeeder::class,
+            FinalGradeSeeder::class,
+            AttendanceSeeder::class,
         ]);
     }
 }
