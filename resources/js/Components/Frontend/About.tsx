@@ -31,7 +31,7 @@ export default function About({ canRegister }: AboutProps) {
           </p>
           {page.props.auth.user ? (
             <Link
-              href={route('dashboard')}
+              href={route('admin.dashboard')}
               className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
             >
               Buka Dashboard
