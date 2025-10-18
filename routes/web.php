@@ -15,7 +15,7 @@ Route::middleware([
 ])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('students', App\Http\Controllers\Admin\StudentController::class);
+    Route::resource('students', App\Http\Controllers\Admin\StudentController::class)->names('students')->parameters(['students' => 'id']);
     Route::resource('grades', App\Http\Controllers\Admin\GradeController::class);
     Route::resource('reports', App\Http\Controllers\Admin\ReportController::class);
     Route::resource('settings', App\Http\Controllers\Admin\SettingController::class);

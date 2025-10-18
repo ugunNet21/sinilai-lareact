@@ -1,0 +1,1 @@
+// js/Pages/Admin/Students/Show.tsx
