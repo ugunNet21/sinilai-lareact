@@ -12,8 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('curricula', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('school_id')->constrained('schools')->onDelete('cascade');
+            $table->string('name', 255);
+            $table->string('code', 50);
+            $table->string('version', 50)->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->text('description')->nullable();
+            $table->date('implementation_date')->nullable();
             $table->timestamps();
+            
+            $table->unique(['school_id', 'code']);
         });
     }
 

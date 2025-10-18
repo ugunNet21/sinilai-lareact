@@ -12,8 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subjects', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('school_id')->constrained('schools')->onDelete('cascade');
+            $table->string('name', 255);
+            $table->string('code', 50);
+            $table->text('description')->nullable();
+            $table->enum('category', ['UMUM', 'KEAHLIAN', 'WAJIB', 'PEMINATAN', 'MUATAN_LOKAL'])->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->integer('order_index')->default(0);
             $table->timestamps();
+            
+            $table->unique(['school_id', 'code']);
         });
     }
 

@@ -12,8 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('grade_components', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('school_id')->constrained('schools')->onDelete('cascade');
+            $table->string('name', 100);
+            $table->string('code', 50);
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->integer('order_index')->default(0);
             $table->timestamps();
+
+            $table->unique(['school_id', 'code']);
         });
     }
 
