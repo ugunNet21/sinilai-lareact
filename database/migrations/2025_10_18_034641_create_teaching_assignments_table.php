@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('teacher_id')->constrained('teachers')->onDelete('cascade');
             $table->foreignUuid('subject_id')->constrained('subjects')->onDelete('cascade');
-            $table->foreignUuid('class_id')->constrained('classes')->onDelete('cascade');
+            $table->foreignUuid('class_id')->constrained('class_rooms')->onDelete('cascade');
             $table->foreignUuid('academic_year_id')->constrained('academic_years')->onDelete('cascade');
             $table->foreignUuid('semester_id')->constrained('semesters')->onDelete('cascade');
             $table->integer('hours_per_week')->default(2);

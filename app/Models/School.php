@@ -41,7 +41,7 @@ class School extends Model
         return $this->hasMany(GradeLevel::class);
     }
 
-    public function classes()
+    public function classRoom()
     {
         return $this->hasMany(ClassRoom::class);
     }

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AdminSidebar from '@/Components/Admin/AdminSidebar';
 import AdminHeader from '@/Components/Admin/AdminHeader';
+import { FlashMessages } from '@/Components/Admin/FlashMessage';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -34,6 +35,7 @@ export default function AdminLayout({ children, title = 'Dashboard' }: AdminLayo
           </main>
         </div>
       </div>
+      <FlashMessages />
     </>
   );
 }

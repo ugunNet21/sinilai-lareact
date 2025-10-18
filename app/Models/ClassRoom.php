@@ -10,7 +10,7 @@ class ClassRoom extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $table = 'classes';
+    protected $table = 'class_rooms';
 
     protected $fillable = [
         'school_id',

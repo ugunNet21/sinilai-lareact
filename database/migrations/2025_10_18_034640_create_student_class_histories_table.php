@@ -12,10 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('student_class_histories', function (Blueprint $table) {
+        Schema::create('student_class_history', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('student_id')->constrained('students')->onDelete('cascade');
-            $table->foreignUuid('class_id')->constrained('classes')->onDelete('cascade');
+            $table->foreignUuid('class_id')->constrained('class_rooms')->onDelete('cascade');
             $table->foreignUuid('academic_year_id')->constrained('academic_years')->onDelete('cascade');
             $table->foreignUuid('semester_id')->constrained('semesters')->onDelete('cascade');
             $table->integer('student_number')->nullable();
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('student_class_histories');
+        Schema::dropIfExists('student_class_history');
     }
 };

@@ -35,7 +35,8 @@ class Student extends Model
         'enrollment_date' => 'date',
     ];
 
-    protected $appends = ['average_grade', 'total_grades'];
+    // FIXED: Added 'current_class' to appends array
+    protected $appends = ['average_grade', 'total_grades', 'current_class'];
 
     // Relationships
     public function school()
@@ -80,6 +81,7 @@ class Student extends Model
      */
     public function getCurrentClassAttribute()
     {
+        // This accessor will now be automatically included in JSON responses
         return $this->classHistories()
             ->with(['class.gradeLevel', 'academicYear', 'semester'])
             ->whereHas('academicYear', function ($query) {
@@ -88,16 +90,18 @@ class Student extends Model
             ->whereHas('semester', function ($query) {
                 $query->where('is_current', true);
             })
-            ->where('status', 'active')
+            ->where('status', 'ACTIVE')
             ->first();
     }
 
     /**
      * Get average grade for this student
+     * FIXED: Return null if no grades exist, so frontend can show '-'
      */
-    public function getAverageGradeAttribute(): float
+    public function getAverageGradeAttribute(): ?float
     {
-        return round($this->finalGrades()->avg('final_score') ?? 0, 2);
+        $average = $this->finalGrades()->avg('final_score');
+        return $average !== null ? round($average, 2) : null;
     }
 
     /**
@@ -155,7 +159,7 @@ class Student extends Model
     {
         return $query->whereHas('classHistories', function ($q) use ($classId) {
             $q->where('class_id', $classId)
-              ->where('status', 'active');
+              ->where('status', 'ACTIVE');
         });
     }
 
@@ -182,11 +186,11 @@ class Student extends Model
     }
 
     /**
-     * Scope: Active students only
+     * Scope: ACTIVE students only
      */
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        return $query->where('status', 'ACTIVE');
     }
 
     /**
@@ -194,6 +198,8 @@ class Student extends Model
      */
     public function scopeWithCurrentClass($query)
     {
+        // This scope is kept for potential direct backend usage, 
+        // but the 'current_class' accessor is now the primary method for JSON output.
         return $query->with(['classHistories' => function ($q) {
             $q->whereHas('academicYear', function ($query) {
                 $query->where('is_current', true);
@@ -201,7 +207,7 @@ class Student extends Model
             ->whereHas('semester', function ($query) {
                 $query->where('is_current', true);
             })
-            ->where('status', 'active')
+            ->where('status', 'ACTIVE')
             ->with(['class.gradeLevel', 'academicYear', 'semester']);
         }]);
     }
