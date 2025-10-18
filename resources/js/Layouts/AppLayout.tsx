@@ -59,7 +59,7 @@ export default function AppLayout({
               <div className="flex">
                 {/* <!-- Logo --> */}
                 <div className="flex-shrink-0 flex items-center">
-                  <Link href={route('dashboard')}>
+                  <Link href={route('admin.dashboard')}>
                     <ApplicationMark className="block h-9 w-auto" />
                   </Link>
                 </div>
@@ -67,7 +67,7 @@ export default function AppLayout({
                 {/* <!-- Navigation Links --> */}
                 <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                   <NavLink
-                    href={route('dashboard')}
+                    href={route('admin.dashboard')}
                     active={route().current('dashboard')}
                   >
                     Dashboard
@@ -282,7 +282,7 @@ export default function AppLayout({
           >
             <div className="pt-2 pb-3 space-y-1">
               <ResponsiveNavLink
-                href={route('dashboard')}
+                href={route('admin.dashboard')}
                 active={route().current('dashboard')}
               >
                 Dashboard

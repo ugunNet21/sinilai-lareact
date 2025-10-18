@@ -38,7 +38,7 @@ export default function Header({ canRegister }: HeaderProps) {
         <div className="hidden md:flex items-center space-x-3">
           {page.props.auth.user ? (
             <Link
-              href={route('dashboard')}
+              href={route('admin.dashboard')}
               className="px-4 py-2 rounded-lg text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition"
             >
               Dashboard
@@ -91,7 +91,7 @@ export default function Header({ canRegister }: HeaderProps) {
             </a>
             {page.props.auth.user ? (
               <Link
-                href={route('dashboard')}
+                href={route('admin.dashboard')}
                 className="text-blue-600 border-t pt-3"
               >
                 Dashboard

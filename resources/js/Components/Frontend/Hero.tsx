@@ -26,7 +26,7 @@ export default function Hero({ canRegister }: HeroProps) {
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           {page.props.auth.user ? (
             <Link
-              href={route('dashboard')}
+              href={route('admin.dashboard')}
               className="px-6 py-3 bg-yellow-400 text-blue-800 font-semibold rounded-lg hover:bg-yellow-300 transition"
             >
               Dashboard

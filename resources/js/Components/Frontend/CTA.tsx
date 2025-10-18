@@ -24,7 +24,7 @@ export default function CTA() {
         </p>
         {page.props.auth.user ? (
           <Link
-            href={route('dashboard')}
+            href={route('admin.dashboard')}
             className="px-6 py-3 bg-yellow-400 text-blue-800 font-semibold rounded-lg hover:bg-yellow-300 transition"
           >
             Buka Dashboard
